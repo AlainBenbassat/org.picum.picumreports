@@ -185,11 +185,12 @@ class CRM_Picumreports_Form_Report_MembershipPayments extends CRM_Report_Form {
           ];
 
           $total = CRM_Core_DAO::singleValueQuery($sql, $sqlParams);
-          /*
+
+          // make the background color red if the amount is zero
           if ($total == 0) {
             $total = "<span style=\"background-color:red\">$total</span>";
           }
-          */
+
           $rows[$i][$k] = $total;
         }
       }
