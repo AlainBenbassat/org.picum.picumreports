@@ -125,11 +125,11 @@ class CRM_Picumreports_Form_Report_MembershipPayments extends CRM_Report_Form {
       inner join
         civicrm_membership m on {$this->_aliases['civicrm_contact']}.id = m.contact_id
       left outer join
-        civicrm_membership_status {$this->_aliases['civicrm_membership_status']} ON {$this->_aliases['civicrm_membership_status']}.id = m.status_id        
+        civicrm_membership_status {$this->_aliases['civicrm_membership_status']} ON {$this->_aliases['civicrm_membership_status']}.id = m.status_id
       left outer join
-        civicrm_value_geographical_area_1 g on g.entity_id = {$this->_aliases['civicrm_contact']}.id  
+        civicrm_value_geographical_area_1 g on g.entity_id = {$this->_aliases['civicrm_contact']}.id
       left outer join
-        civicrm_country ctr on g.country_of_representation_1 = ctr.id        
+        civicrm_country ctr on g.country_of_representation_1 = ctr.id
     ";
 
     $this->_from = $from;
@@ -160,8 +160,6 @@ class CRM_Picumreports_Form_Report_MembershipPayments extends CRM_Report_Form {
   function alterDisplay(&$rows) {
     $i = 0;
     foreach ($rows as $row) {
-      $i++;
-
       foreach ($row as $k => $v) {
         // check if this a year column
         if (strpos($k, 'civicrm_years_fee_') === 0) {
@@ -195,6 +193,8 @@ class CRM_Picumreports_Form_Report_MembershipPayments extends CRM_Report_Form {
           $rows[$i][$k] = $total;
         }
       }
+
+      $i++;
     }
   }
 
