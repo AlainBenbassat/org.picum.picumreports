@@ -166,10 +166,10 @@ class CRM_Picumreports_Form_Report_MembershipPayments extends CRM_Report_Form {
           // extract the year
           $year = str_replace('civicrm_years_fee_', '', $k);
 
-          // get the contributions for that contact and year and staus = Completed
+          // get the contributions for that contact and year and staus = Completed or Pending
           $sql = "
             select
-              ifnull(sum(total_amount), 0)
+              total_amount
             from
               civicrm_contribution
             where
@@ -177,7 +177,7 @@ class CRM_Picumreports_Form_Report_MembershipPayments extends CRM_Report_Form {
             and
               source = %2
             and
-              contribution_status_id = 1
+              contribution_status_id in (1, 2)
           ";
           $sqlParams = [
             1 => [$row['civicrm_contact_id'], 'Integer'],
