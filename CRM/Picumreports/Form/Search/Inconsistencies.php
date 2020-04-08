@@ -1,9 +1,9 @@
 <?php
 
-/*
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-*/
+
 
 
 
@@ -11,15 +11,21 @@ class CRM_Picumreports_Form_Search_Inconsistencies extends CRM_Contact_Form_Sear
   private $helper;
 
   public function __construct(&$formValues) {
-    $this->helper = new CRM_Picumreports_Form_Search_Inconsistencies();
-
     parent::__construct($formValues);
+
+    $this->helper = new CRM_Picumreports_InconsistenciesHelper();
   }
 
   function buildForm(&$form) {
     CRM_Utils_System::setTitle('PICUM Database Inconsistencies');
 
-    $form->addRadio('queryFilter', 'To check:', $this->helper->queriesRadioButtons, NULL, '<br>', TRUE);
+    $form->addRadio('queryFilter', 'Check:', $this->helper->queriesRadioButtons, ['default' => 1], '<br>', TRUE);
+
+    // see if there's a default to set
+    $defaultQueryID = CRM_Utils_Request::retrieve('qid', 'Integer');
+    if ($defaultQueryID === NULL) {
+      $defaultQueryID = 0;
+    }
 
     $form->assign('elements', ['queryFilter']);
   }

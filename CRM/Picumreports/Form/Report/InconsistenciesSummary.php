@@ -1,6 +1,7 @@
 <?php
 
 class CRM_Picumreports_Form_Report_InconsistenciesSummary extends CRM_Report_Form {
+  private $customSearchID = 0;
 
   function __construct() {
     $this->_columns = array(
@@ -20,6 +21,17 @@ class CRM_Picumreports_Form_Report_InconsistenciesSummary extends CRM_Report_For
       ),
     );
 
+    // get the ID of the related custom search
+    try {
+      $this->customSearchID = civicrm_api3('CustomSearch', 'getsingle', [
+        'return' => ['value'],
+        'name' => 'CRM_Picumreports_Form_Search_Inconsistencies',
+      ])['value'];
+    }
+    catch (Exception $e) {
+      // do nothing, customSearchID will be zero
+    }
+
     parent::__construct();
   }
 
@@ -38,8 +50,7 @@ class CRM_Picumreports_Form_Report_InconsistenciesSummary extends CRM_Report_For
   }
 
   public function whereClause(&$field, $op, $value, $min, $max) {
-    $clause = "{$this->_aliases['civicrm_contact']}.id < 5";
-    return $clause;
+    return '';
   }
 
   function alterDisplay(&$rows) {
@@ -54,17 +65,20 @@ class CRM_Picumreports_Form_Report_InconsistenciesSummary extends CRM_Report_For
       $count = CRM_Core_DAO::singleValueQuery($sql);
 
       // add a row
+      $url = CRM_Utils_System::url('civicrm/contact/search/custom', 'reset=1&csid=' . $this->customSearchID . '&qid=' . $q->index);
       $row = [];
       $row['civicrm_contact_column1'] = $q->label;
-      $row['civicrm_contact_column2'] = $count;
+      $row['civicrm_contact_column2'] = '<a = href="' . $url . '">' . $count . '</a>';
       $rows[] = $row;
     }
 
     // add link to custom search
-    $url = CRM_Utils_System::url('civicrm/contact/search/custom?csid=23', 'reset=1');
+    /*
+    $url = CRM_Utils_System::url('civicrm/contact/search/custom', 'reset=1&csid=' . $this->customSearchID);
     $row['civicrm_contact_column1'] = '<a = href="' . $url . '">More details</a>';
     $row['civicrm_contact_column2'] = '';
     $rows[] = $row;
+    */
   }
 
 }
