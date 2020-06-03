@@ -21,3 +21,20 @@
 <p>&nbsp;</p>
 
 <h3>New Members by Year</h3>
+<table class="report-layout display">
+    <thead>
+    <tr>
+        <th>Year</th>
+        <th>Number of New Members</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach from=$newMembersByYear item=row}
+        <tr class="{cycle values="odd-row,even-row"}">
+            <td>{$row.start_year}</td>
+            <td>{$row.no_of_members}</td>
+        </tr>
+    {/foreach}
+    </tbody>
+</table>
+<p>&nbsp;</p>

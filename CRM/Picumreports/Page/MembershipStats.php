@@ -10,6 +10,7 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
     $this->assign('noOfCurrentMembers', $this->getCurrentMembersCount());
     $this->assign('noOfCurrentCountries', $this->getCurrentCountriesCount());
     $this->assign('membersCountbyCountry', $this->getCurrentMembersCountByCountry());
+    $this->assign('newMembersByYear', $this->getNewMembersCountByYear());
 
     parent::run();
   }
@@ -77,6 +78,32 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
         ctry.name
       order by
         ctry.name    
+    ";
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    return $dao->fetchAll();
+  }
+
+  private function getNewMembersCountByYear() {
+    $sql = "
+      select
+        year(m.start_date) start_year
+        , count(m.id) no_of_members
+      from
+        civicrm_contact c
+      inner join civicrm_membership m on
+        m.contact_id = c.id
+      where
+        c.is_deleted = 0
+        and c.contact_type = 'Organization'
+        and m.status_id in (2, 6, 8)
+        and m.membership_type_id = 1
+        and m.owner_membership_id IS NULL
+      group by
+        year(m.start_date)
+      order by
+        1 desc 
+      limit
+        0, 3   
     ";
     $dao = CRM_Core_DAO::executeQuery($sql);
     return $dao->fetchAll();
