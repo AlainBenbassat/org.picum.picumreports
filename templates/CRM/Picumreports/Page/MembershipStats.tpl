@@ -1,7 +1,7 @@
 <h3>Current Members</h3>
 <p>PICUM currently has {$noOfCurrentMembers} members in {$noOfCurrentCountries} different countries.</p>
 
-<h3>Current Members per Country</h3>
+<h3>Current Members by Country</h3>
 <table class="report-layout display">
     <thead>
         <tr>
