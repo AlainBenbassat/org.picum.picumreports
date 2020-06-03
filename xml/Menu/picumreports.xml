@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/picummembersstats</path>
+    <page_callback>CRM_Picumreports_Page_MembershipStats</page_callback>
+    <title>MembershipStats</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
