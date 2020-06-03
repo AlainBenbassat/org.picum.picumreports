@@ -38,7 +38,7 @@ class CRM_Picumreports_InconsistenciesHelper {
         from 
           civicrm_entity_tag et 
         inner join 
-          civicrm_tag t
+          civicrm_tag t on et.tag_id = t.id
         inner join 
           civicrm_contact trc on trc.id = et.entity_id 
         where
@@ -69,7 +69,7 @@ class CRM_Picumreports_InconsistenciesHelper {
         from 
           civicrm_entity_tag et 
         inner join 
-          civicrm_tag t
+          civicrm_tag t on et.tag_id = t.id
         inner join 
           civicrm_contact trc on trc.id = et.entity_id 
         where

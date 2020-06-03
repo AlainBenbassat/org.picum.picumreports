@@ -71,14 +71,6 @@ class CRM_Picumreports_Form_Report_InconsistenciesSummary extends CRM_Report_For
       $row['civicrm_contact_column2'] = '<a = href="' . $url . '">' . $count . '</a>';
       $rows[] = $row;
     }
-
-    // add link to custom search
-    /*
-    $url = CRM_Utils_System::url('civicrm/contact/search/custom', 'reset=1&csid=' . $this->customSearchID);
-    $row['civicrm_contact_column1'] = '<a = href="' . $url . '">More details</a>';
-    $row['civicrm_contact_column2'] = '';
-    $rows[] = $row;
-    */
   }
 
 }
