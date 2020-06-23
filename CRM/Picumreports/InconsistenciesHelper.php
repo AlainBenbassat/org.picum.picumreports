@@ -81,5 +81,27 @@ class CRM_Picumreports_InconsistenciesHelper {
     $this->queries[$index] = $q;
     $this->queriesRadioButtons[$q->index] = $q->label;
     $index++;
+
+    // employer is a member, but the contact does not have an inherited membership
+    $q = new PicumInconsistenciesQuery();
+    $q->label = 'Employer is a member, but employee did not inherit the membership';
+    $q->index = $index;
+    $q->from = "civicrm_contact contact_a
+      inner join
+        civicrm_relationship r on contact_a.id = r.contact_id_a and r.contact_id_b = contact_a.employer_id
+      inner join
+        civicrm_membership memp on contact_a.employer_id = memp.contact_id
+      left outer join
+        civicrm_membership mpers on contact_a.id = mpers.contact_id
+    ";
+    $q->where = "
+      contact_a.contact_type = 'Individual'
+      and mpers.id is null
+      and memp.start_date <= NOW() and memp.end_date >= NOW()
+      and contact_a.is_deleted = 0
+    ";
+    $this->queries[$index] = $q;
+    $this->queriesRadioButtons[$q->index] = $q->label;
+    $index++;
   }
 }
