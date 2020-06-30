@@ -150,8 +150,11 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
 
       // participants
       $p = $this->getParticipantsForYear($year);
+      $url = '<a href="'
+        . CRM_Utils_System::url('civicrm/picumeventsstats', "reset=1&year=$year")
+        . '">' . $year . '</a>';
 
-      $returnArr[] = [$year, $e, $p];
+      $returnArr[] = [$url, $e, $p];
     }
 
     return $returnArr;

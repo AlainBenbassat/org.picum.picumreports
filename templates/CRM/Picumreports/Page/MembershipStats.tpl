@@ -67,4 +67,5 @@
     {/foreach}
     </tbody>
 </table>
+<p>(click on the year for detailed event statistics)</p>
 <p>&nbsp;</p>
