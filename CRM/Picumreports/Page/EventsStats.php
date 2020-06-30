@@ -70,7 +70,32 @@ class CRM_Picumreports_Page_EventsStats extends CRM_Core_Page {
         e.start_date
     ";
     $dao = CRM_Core_DAO::executeQuery($sql);
-    return $dao->fetchAll();
+    $r = $dao->fetchAll();
+
+    // add the totals
+    if (count($r) > 0) {
+      $sql = "
+        select 
+          count(p.id) 
+        from
+          civicrm_event e 
+        inner join
+          civicrm_participant p on p.event_id = e.id
+        where 
+          p.status_id in (1, 2)
+        and
+          e.event_type_id = $eventTypeId
+        and
+          year(e.start_date) = {$this->year} 
+      ";
+      $r[] = [
+        'start_date' => '',
+        'title' => '<strong>TOTAL</strong>',
+        'participants' => '<strong>' . CRM_Core_DAO::singleValueQuery($sql) . '</strong>'
+      ];
+    }
+
+    return $r;
   }
 
 }
