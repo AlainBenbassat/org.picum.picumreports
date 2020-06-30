@@ -1,4 +1,6 @@
+<h2>1. Memberships</h2>
 <h3>Current Members</h3>
+
 <p>PICUM currently has {$noOfCurrentMembers} members in {$noOfCurrentCountries} different countries.</p>
 
 <h3>Current Members by Country</h3>
@@ -20,19 +22,47 @@
 </table>
 <p>&nbsp;</p>
 
-<h3>New Members by Year</h3>
+<h3>Memberships by Year</h3>
 <table class="report-layout display">
     <thead>
     <tr>
         <th>Year</th>
-        <th>Number of New Members</th>
+        <th>Total</th>
+        <th>New Members</th>
+        <th>Withdrawals</th>
+        <th>Terminated</th>
     </tr>
     </thead>
     <tbody>
-    {foreach from=$newMembersByYear item=row}
+    {foreach from=$membersByYear item=row}
         <tr class="{cycle values="odd-row,even-row"}">
-            <td>{$row.start_year}</td>
-            <td>{$row.no_of_members}</td>
+            <td>{$row[0]}</td>
+            <td>{$row[1]}</td>
+            <td>{$row[2]}</td>
+            <td>{$row[3]}</td>
+            <td>{$row[4]}</td>
+        </tr>
+    {/foreach}
+    </tbody>
+</table>
+<p>&nbsp;</p>
+
+<h2>2. Events</h2>
+
+<table class="report-layout display">
+    <thead>
+    <tr>
+        <th>Year</th>
+        <th>Events</th>
+        <th>Participants</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach from=$eventsByYear item=row}
+        <tr class="{cycle values="odd-row,even-row"}">
+            <td>{$row[0]}</td>
+            <td>{$row[1]}</td>
+            <td>{$row[2]}</td>
         </tr>
     {/foreach}
     </tbody>
