@@ -20,6 +20,8 @@
 </table>
 <p>&nbsp;</p>
 
+<h2>All Events</h2>
+<p>See <a href="{$overviewURL}">overview page</a></p>
 
 <h2>Events per Event Type</h2>
 {foreach from=$events item=rows key=eventCategory}

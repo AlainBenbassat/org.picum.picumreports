@@ -17,6 +17,9 @@ class CRM_Picumreports_Page_EventsStats extends CRM_Core_Page {
     $returnURL = '<a href="' . CRM_Utils_System::url('civicrm/picummembersstats', "reset=1") . '">Return to PICUM CRM Statistics</a>';
     $this->assign('returnURL', $returnURL);
 
+    $overviewURL = CRM_Utils_System::url('civicrm/picumallevents', "reset=1&year=" . $this->year);
+    $this->assign('overviewURL', $overviewURL);
+
     $eventSummary = $this->getEventSummary();
     $this->assign('eventSummary', $eventSummary);
 
