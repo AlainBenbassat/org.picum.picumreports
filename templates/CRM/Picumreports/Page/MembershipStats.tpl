@@ -47,8 +47,3 @@
 </table>
 <p>&nbsp;</p>
 
-<h2>2. Events</h2>
-
-
-<p>(click on the year for detailed event statistics)</p>
-<p>&nbsp;</p>
