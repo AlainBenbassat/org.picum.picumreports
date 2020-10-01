@@ -42,7 +42,7 @@
 </table>
 <p>&nbsp;</p>
 
-<h3>All Events by Event Type</h3>
+<h2>All Events by Event Type</h2>
 {foreach from=$events item=rows key=eventCategory}
     <h3>{$eventCategory}</h3>
     <table class="report-layout display">
@@ -68,5 +68,5 @@
 {/foreach}
 <p>&nbsp;</p>
 
-<h3>All Events</h3>
+<h2>All Events</h2>
 <p><a href="{$overviewURL}">See list</a></p>
