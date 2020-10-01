@@ -1,7 +1,9 @@
-<h2>1. Memberships</h2>
+<h2>Overview</h2>
 <h3>Current Members</h3>
 
 <p>PICUM currently has {$noOfCurrentMembers} members in {$noOfCurrentCountries} different countries.</p>
+
+<h2>Details</h2>
 
 <h3>Current Members by Country</h3>
 <table class="report-layout display">
