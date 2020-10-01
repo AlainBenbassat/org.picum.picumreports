@@ -1,5 +1,5 @@
 
-<h1>Overview by Year</h1>
+<h2>Overview by Year</h2>
 <table class="report-layout display">
     <thead>
     <tr>
@@ -20,8 +20,8 @@
 </table>
 <p>&nbsp;</p>
 
-<h1>Details of {$statsYear}</h1>
-<h2>Summary by Event Type</h2>
+<h2>Details of {$statsYear}</h2>
+<h3>Summary by Event Type</h3>
 <table class="report-layout display">
     <thead>
     <tr>
@@ -42,7 +42,7 @@
 </table>
 <p>&nbsp;</p>
 
-<h2>All Events by Event Type</h2>
+<h3>All Events by Event Type</h3>
 {foreach from=$events item=rows key=eventCategory}
     <h3>{$eventCategory}</h3>
     <table class="report-layout display">
@@ -68,5 +68,5 @@
 {/foreach}
 <p>&nbsp;</p>
 
-<h2>All Events</h2>
-<p>See <a href="{$overviewURL}">list</a></p>
+<h3>All Events</h3>
+<p><a href="{$overviewURL}">See list</a></p>
