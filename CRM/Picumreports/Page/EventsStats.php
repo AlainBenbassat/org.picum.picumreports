@@ -2,6 +2,7 @@
 use CRM_Picumreports_ExtensionUtil as E;
 
 class CRM_Picumreports_Page_EventsStats extends CRM_Core_Page {
+  private $HISTORY_NUM_YEARS = 3;
   private $year;
 
   public function __construct($title = NULL, $mode = NULL) {
@@ -12,13 +13,15 @@ class CRM_Picumreports_Page_EventsStats extends CRM_Core_Page {
   }
 
   public function run() {
-    CRM_Utils_System::setTitle('PICUM Events in ' . $this->year);
+    CRM_Utils_System::setTitle('PICUM Event Statistics');
 
-    $returnURL = '<a href="' . CRM_Utils_System::url('civicrm/picummembersstats', "reset=1") . '">Return to PICUM CRM Statistics</a>';
-    $this->assign('returnURL', $returnURL);
+    $this->assign('statsYear', $this->year);
 
     $overviewURL = CRM_Utils_System::url('civicrm/picumallevents', "reset=1&year=" . $this->year);
     $this->assign('overviewURL', $overviewURL);
+
+    $eventsByYear = $this->getEventsAndParticipantsByYear();
+    $this->assign('eventsByYear', $eventsByYear);
 
     $eventSummary = $this->getEventSummary();
     $this->assign('eventSummary', $eventSummary);
@@ -165,5 +168,57 @@ class CRM_Picumreports_Page_EventsStats extends CRM_Core_Page {
 
     return $r;
   }
+
+  private function getEventsAndParticipantsByYear() {
+    $returnArr = [];
+    $currentYear = date('Y');
+    for ($year = $currentYear; $year > $currentYear - $this->HISTORY_NUM_YEARS; $year--) {
+      // events
+      $e = $this->getEventsForYear($year);
+
+      // participants
+      $p = $this->getParticipantsForYear($year);
+      $url = '<a href="'
+        . CRM_Utils_System::url('civicrm/picumeventsstats', "reset=1&year=$year")
+        . '">' . $year . '</a>';
+
+      $returnArr[] = [$url, $e, $p];
+    }
+
+    return $returnArr;
+  }
+
+  private function getEventsForYear($year) {
+    $sql = "
+      select
+        count(e.id) no_of_events
+      from
+        civicrm_event e
+      where
+        year(e.start_date) = $year
+    ";
+    return CRM_Core_DAO::singleValueQuery($sql);
+  }
+
+  private function getParticipantsForYear($year) {
+    $sql = "
+      select
+        count(p.id) no_of_participants
+      from
+        civicrm_contact c
+      inner join 
+        civicrm_participant p on p.contact_id = c.id
+      inner join
+        civicrm_event e on e.id = p.event_id
+      where
+        c.is_deleted = 0
+      and 
+        year(e.start_date) = $year
+      and
+        p.status_id in (1, 2)        
+    ";
+    return CRM_Core_DAO::singleValueQuery($sql);
+  }
+
 
 }

@@ -49,23 +49,6 @@
 
 <h2>2. Events</h2>
 
-<table class="report-layout display">
-    <thead>
-    <tr>
-        <th>Year</th>
-        <th>Events</th>
-        <th>Participants</th>
-    </tr>
-    </thead>
-    <tbody>
-    {foreach from=$eventsByYear item=row}
-        <tr class="{cycle values="odd-row,even-row"}">
-            <td>{$row[0]}</td>
-            <td>{$row[1]}</td>
-            <td>{$row[2]}</td>
-        </tr>
-    {/foreach}
-    </tbody>
-</table>
+
 <p>(click on the year for detailed event statistics)</p>
 <p>&nbsp;</p>

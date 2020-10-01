@@ -1,5 +1,27 @@
-<p>&lt; {$returnURL}</p>
-<h2>Summary</h2>
+
+<h1>Overview by Year</h1>
+<table class="report-layout display">
+    <thead>
+    <tr>
+        <th>Year</th>
+        <th>Events</th>
+        <th>Participants</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach from=$eventsByYear item=row}
+        <tr class="{cycle values="odd-row,even-row"}">
+            <td>{$row[0]}</td>
+            <td>{$row[1]}</td>
+            <td>{$row[2]}</td>
+        </tr>
+    {/foreach}
+    </tbody>
+</table>
+<p>&nbsp;</p>
+
+<h1>Details of {$statsYear}</h1>
+<h2>Summary by Event Type</h2>
 <table class="report-layout display">
     <thead>
     <tr>
@@ -20,11 +42,7 @@
 </table>
 <p>&nbsp;</p>
 
-<h2>All Events</h2>
-<p>See <a href="{$overviewURL}">overview page</a></p>
-<p>&nbsp;</p>
-
-<h2>Events per Event Type</h2>
+<h2>All Events by Event Type</h2>
 {foreach from=$events item=rows key=eventCategory}
     <h3>{$eventCategory}</h3>
     <table class="report-layout display">
@@ -48,3 +66,7 @@
     <p>&nbsp;</p>
 
 {/foreach}
+<p>&nbsp;</p>
+
+<h2>All Events</h2>
+<p>See <a href="{$overviewURL}">list</a></p>
