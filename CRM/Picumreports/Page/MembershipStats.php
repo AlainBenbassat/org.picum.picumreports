@@ -95,7 +95,7 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
     for ($year = $currentYear; $year > $currentYear - $this->HISTORY_NUM_YEARS; $year--) {
       // total
       $status = [$this->MEMBERSHIP_STATUS_CURRENT, $this->MEMBERSHIP_STATUS_WITHDRAWLED_CANCELLED, $this->MEMBERSHIP_STATUS_TERMINATED];
-      $condition = "year(m.start_date) <= $year and year(m.end_date) >= $year";
+      $condition = "year(m.start_date) <= $year and m.end_date >= '$year-12-31'";
       $total = $this->getMembersForYear($status, $condition);
 
       // new members
