@@ -53,7 +53,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
   private function getSort() {
     $previoussort = CRM_Utils_Request::retrieveValue('previoussort', 'Integer', 2, FALSE, 'GET');
     $newsort = CRM_Utils_Request::retrieveValue('newsort', 'Integer', $previoussort, FALSE, 'GET');
-    $sortorder = CRM_Utils_Request::retrieveValue('sortorder', 'Integer', 1, FALSE, 'GET'); // 0 = asc, 1 = desc
+    $sortorder = CRM_Utils_Request::retrieveValue('sortorder', 'Integer', 2, FALSE, 'GET'); // 0 = asc, 1 = desc
 
     if ($newsort == $previoussort) {
       // invert the sort order
