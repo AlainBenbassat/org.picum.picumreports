@@ -144,6 +144,9 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
         a.activity_type_id = $codeOfConductActivityId
       and
         ac.contact_id = c.id
+      order by
+        activity_date_time desc 
+      limit 0,1
     ";
 
     return $sql;
