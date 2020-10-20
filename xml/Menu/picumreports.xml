@@ -12,4 +12,10 @@
     <title>EventsStats</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/picumallmembers</path>
+    <page_callback>CRM_Picumreports_Page_PicumAllMembers</page_callback>
+    <title>PicumAllMembers</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>
