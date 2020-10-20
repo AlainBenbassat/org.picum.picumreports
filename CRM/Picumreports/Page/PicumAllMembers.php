@@ -174,7 +174,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
       and
         ct.source like 'Fee %'
       order by
-        ct.receive_date desc
+        ct.source desc
       limit  
         0, 1
     ";
