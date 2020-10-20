@@ -64,7 +64,8 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
   private function getCurrentMembersCountByCountry() {
     $sql = "
       select
-        ctry.name country
+        ctry.id country_id
+        , ctry.name country
         , count(m.id) no_of_members
       from
         civicrm_contact c
@@ -81,7 +82,8 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
         and m.membership_type_id = 1
         and m.owner_membership_id IS NULL
       group by
-        ctry.name
+        ctry.id
+        , ctry.name
       order by
         ctry.name    
     ";

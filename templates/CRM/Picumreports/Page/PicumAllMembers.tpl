@@ -10,6 +10,7 @@
         <th><a href="{$currentURL}&newsort=7">N° of events attended last year</a></th>
         <th><a href="{$currentURL}&newsort=8">Communication Channels</a></th>
         <th><a href="{$currentURL}&newsort=9">Code of Conduct Signed</a></th>
+        <th><a href="{$currentURL}&newsort=10">Last Membership Fee</a></th>
     </tr>
     </thead>
     <tbody>
@@ -23,6 +24,7 @@
             <td>{$row.no_of_events_last_year}</td>
             <td>{$row.comm_channels}</td>
             <td>{$row.code_of_conduct}</td>
+            <td>{$row.contribution_status}</td>
         </tr>
     {/foreach}
     </tbody>

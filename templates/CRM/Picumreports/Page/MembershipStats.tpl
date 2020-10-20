@@ -42,7 +42,7 @@
         {foreach from=$membersCountbyCountry item=row}
             <tr class="{cycle values="odd-row,even-row"}">
                 <td>{$row.country}</td>
-                <td>{$row.no_of_members}</td>
+                <td><a href="admin.php?page=CiviCRM&q=civicrm%2Fpicumallmembers&country_id={$row.country_id}">{$row.no_of_members}</a></td>
             </tr>
         {/foreach}
     </tbody>

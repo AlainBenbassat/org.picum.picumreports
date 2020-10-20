@@ -10,18 +10,21 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
     // get the number of the column to sort on, and the order (asc/desc)
     list($newsort, $sortorder) = $this->getSort();
 
+    // get the country filter (if available)
+    $filter = $this->getFilter();
+
     // create the url for the column header hyperlink
     $invertedSortorder = ($sortorder == 'asc') ? 1 : 0;
     $currentURL = CRM_Utils_System::url('civicrm/picumallmembers', "reset=1&year=CURRENT&previoussort=$newsort&sortorder=$invertedSortorder");
     $this->assign('currentURL', $currentURL);
 
-    $members = $this->getAllMembers($newsort, $sortorder);
+    $members = $this->getAllMembers($newsort, $sortorder, $filter);
     $this->assign('members', $members);
 
     parent::run();
   }
 
-  private function getAllMembers($sort, $sortorder) {
+  private function getAllMembers($sort, $sortorder, $filter) {
     $lastSeenOnSubquery = $this->getLastSeenOnSubquery();
 
     $noOfEventsThisYear = $this->getEventCountSubquery(date('Y'));
@@ -30,6 +33,8 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
     $communicationChannelsSubquery = $this->getCommunicationChannelsSubquery();
 
     $codeOfConductStatusSubquery = $this->getCodeOfConductStatus();
+
+    $contributionStatusSubquery = $this->getLastContribution();
 
     $sql = "
       select
@@ -42,6 +47,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
         , ($noOfEventsLastYear) no_of_events_last_year
         , ($communicationChannelsSubquery) comm_channels
         , ($codeOfConductStatusSubquery) code_of_conduct
+        , ($contributionStatusSubquery) contribution_status
       from
         civicrm_contact c
       inner join civicrm_membership m on
@@ -56,6 +62,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
         and m.status_id = {$this->MEMBERSHIP_STATUS_CURRENT}
         and m.membership_type_id = 1
         and m.owner_membership_id IS NULL
+        {$filter}
       order by
         $sort $sortorder    
     ";
@@ -152,6 +159,29 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
     return $sql;
   }
 
+  private function getLastContribution() {
+    $contributionStatusOptionGroupId = 11;
+
+    $sql = "
+      select
+        concat(ct.source, ': ', ovm.label)
+      from
+        civicrm_contribution ct
+      inner join
+        civicrm_option_value ovm on ovm.value = ct.contribution_status_id and ovm.option_group_id = $contributionStatusOptionGroupId
+      where
+        ct.contact_id = c.id
+      and
+        ct.source like 'Fee %'
+      order by
+        ct.receive_date desc
+      limit  
+        0, 1
+    ";
+
+    return $sql;
+  }
+
   private function getSort() {
     $previoussort = CRM_Utils_Request::retrieveValue('previoussort', 'Integer', 2, FALSE, 'GET');
     $newsort = CRM_Utils_Request::retrieveValue('newsort', 'Integer', $previoussort, FALSE, 'GET');
@@ -171,5 +201,16 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
     }
 
     return [$newsort, $sortorder];
+  }
+
+  private function getFilter() {
+    // get the country_id query parameter
+    $filter = CRM_Utils_Request::retrieveValue('country_id', 'Integer', 0, FALSE, 'GET');
+    if ($filter) {
+      return "and ctry.id = $filter";
+    }
+    else {
+      return '';
+    }
   }
 }
