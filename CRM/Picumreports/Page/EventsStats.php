@@ -6,8 +6,10 @@ class CRM_Picumreports_Page_EventsStats extends CRM_Core_Page {
   private $year;
 
   public function __construct($title = NULL, $mode = NULL) {
+    $nullObj = NULL;
+
     // get the year from the query string
-    $this->year = CRM_Utils_Request::retrieve('year', 'Integer', CRM_Core_DAO::$_nullObject, FALSE, date('Y'));
+    $this->year = CRM_Utils_Request::retrieve('year', 'Integer', $nullObj, FALSE, date('Y'));
 
     parent::__construct($title, $mode);
   }

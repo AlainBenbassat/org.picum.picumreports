@@ -1,14 +1,11 @@
-<h2>Overview</h2>
-<h3>Current Members</h3>
+<h2>Overview by year</h2>
 
-<p>PICUM currently has {$noOfCurrentMembers} members in {$noOfCurrentCountries} different countries.</p>
-
-<h3>Memberships by Year</h3>
 <table class="report-layout display">
     <thead>
     <tr>
         <th>Year</th>
         <th>Total</th>
+        <th>Countries</th>
         <th>New Members</th>
         <th>Withdrawals</th>
         <th>Terminated</th>
@@ -22,15 +19,16 @@
             <td>{$row[2]}</td>
             <td>{$row[3]}</td>
             <td>{$row[4]}</td>
+            <td>{$row[5]}</td>
         </tr>
     {/foreach}
     </tbody>
 </table>
 <p>&nbsp;</p>
 
-<h2>Details</h2>
+<h2>Details of {$statsYear}</h2>
 
-<h3>Current Members by Country</h3>
+<h3>Members by Country</h3>
 <table class="report-layout display">
     <thead>
         <tr>
