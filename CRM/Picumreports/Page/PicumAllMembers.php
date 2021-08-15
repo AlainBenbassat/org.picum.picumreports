@@ -3,19 +3,21 @@ use CRM_Picumreports_ExtensionUtil as E;
 
 class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
   private $MEMBERSHIP_STATUS_CURRENT = 2;
+  private $MEMBERSHIP_STATUS_TERMINATED = 8;
+  private $MEMBERSHIP_STATUS_WITHDRAWALS = 6;
 
   public function run() {
-    CRM_Utils_System::setTitle('PICUM Current Members');
+    CRM_Utils_System::setTitle('PICUM ' . $this->getMemberLabel());
 
     // get the number of the column to sort on, and the order (asc/desc)
-    list($newsort, $sortorder) = $this->getSort();
+    [$newsort, $sortorder] = $this->getSort();
 
-    // get the country filter (if available)
-    $filter = $this->getFilter();
+    // get the country and status filter (if available)
+    [$filter, $filterQueryString] = $this->getFilter();
 
     // create the url for the column header hyperlink
     $invertedSortorder = ($sortorder == 'asc') ? 1 : 0;
-    $currentURL = CRM_Utils_System::url('civicrm/picumallmembers', "reset=1&year=CURRENT&previoussort=$newsort&sortorder=$invertedSortorder");
+    $currentURL = CRM_Utils_System::url('civicrm/picumallmembers', "reset=1&year=CURRENT$filterQueryString&previoussort=$newsort&sortorder=$invertedSortorder");
     $this->assign('currentURL', $currentURL);
 
     $members = $this->getAllMembers($newsort, $sortorder, $filter);
@@ -42,6 +44,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
         , ctry.name country
         , c.organization_name
         , m.start_date
+        , m.end_date
         , ($lastSeenOnSubquery) last_seen_on
         , ($noOfEventsThisYear) no_of_events_this_year
         , ($noOfEventsLastYear) no_of_events_last_year
@@ -59,7 +62,6 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
       where
         c.is_deleted = 0
         and c.contact_type = 'Organization'
-        and m.status_id = {$this->MEMBERSHIP_STATUS_CURRENT}
         and m.membership_type_id = 1
         and m.owner_membership_id IS NULL
         {$filter}
@@ -204,13 +206,39 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
   }
 
   private function getFilter() {
+    $filter = '';
+    $filterQueryString = '';
+
     // get the country_id query parameter
-    $filter = CRM_Utils_Request::retrieveValue('country_id', 'Integer', 0, FALSE, 'GET');
-    if ($filter) {
-      return "and ctry.id = $filter";
+    $countryId = CRM_Utils_Request::retrieveValue('country_id', 'Integer', 0, FALSE, 'GET');
+    if ($countryId) {
+      $filter .= " and ctry.id = $countryId";
+      $filterQueryString = "&country_id=$countryId";
+    }
+
+    // get the status_id query parameter
+    $statusId = CRM_Utils_Request::retrieveValue('status_id', 'Integer', 0, FALSE, 'GET');
+    if (!$statusId) {
+      $statusId = $this->MEMBERSHIP_STATUS_CURRENT;
+    }
+    $filter .= " and m.status_id = $statusId";
+    $filterQueryString .= "&status_id=$statusId";
+
+    return [$filter, $filterQueryString];
+  }
+
+  private function getMemberLabel() {
+    $statusId = CRM_Utils_Request::retrieveValue('status_id', 'Integer', 0, FALSE, 'GET');
+    if ($statusId == $this->MEMBERSHIP_STATUS_TERMINATED) {
+      $label = 'Terminated Members';
+    }
+    elseif ($statusId == $this->MEMBERSHIP_STATUS_WITHDRAWALS) {
+      $label = 'Withdrawn Members';
     }
     else {
-      return '';
+      $label = 'Current Members';
     }
+
+    return $label;
   }
 }
