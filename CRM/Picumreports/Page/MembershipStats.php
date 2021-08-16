@@ -97,11 +97,7 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
       $condition = "year(m.end_date) = $year";
       $terminated = $this->getMembersForYear($status, $condition);
 
-      $url = '<a href="'
-        . CRM_Utils_System::url('civicrm/picummembersstats', "reset=1&year=$year")
-        . '">' . $year . '</a>';
-
-      $returnArr[] = [$url, $total, $countries, $new, $cancelled, $terminated];
+      $returnArr[] = [$year, $total, $countries, $new, $cancelled, $terminated];
     }
 
     return $returnArr;

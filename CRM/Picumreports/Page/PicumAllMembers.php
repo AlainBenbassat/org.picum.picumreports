@@ -11,8 +11,8 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
   private $filterCountryId = 0;
   private $filterYear = 0;
 
-  private $sortOrder;
-  private $sortOrderForUrl;
+  private $sortOrder = ' ASC ';
+  private $sortOrderForUrl = 0;
   private $sortColumn;
 
   public function run() {
@@ -238,18 +238,21 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
       // invert the sort order
       if ($sortorder == 0) {
         $sortorder = 'asc';
+        $this->sortOrderForUrl = 1;
       }
       else {
         $sortorder = 'desc';
+        $this->sortOrderForUrl = 0;
       }
     }
     else {
       $sortorder = 'asc';
+      $this->sortOrderForUrl = 0;
     }
 
     $this->sortColumn = $newsortcol;
     $this->sortOrder = $sortorder;
-    $this->sortOrderForUrl = ($sortorder == 'asc') ? 1 : 0;
+    //$this->sortOrderForUrl = ($sortorder == 'asc') ? 1 : 0;
   }
 
   private function retrieveFilters() {
@@ -303,6 +306,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
 
     if ($overwriteStatusId) {
       $queryParams['status_id'] = $overwriteStatusId;
+      $queryParams['sortorder'] = 0;
     }
     elseif ($this->filterStatusId) {
       $queryParams['status_id'] = $this->filterStatusId;
@@ -310,6 +314,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
 
     if ($overwriteYear) {
       $queryParams['year'] = $overwriteYear;
+      $queryParams['sortorder'] = 0;
     }
     else {
       $queryParams['year'] = $this->filterYear;
