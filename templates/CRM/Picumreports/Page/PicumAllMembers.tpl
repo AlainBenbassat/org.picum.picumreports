@@ -1,20 +1,20 @@
 <p>
-    Membership status: Current members | New Members | Withdrawals | Terminated
-    <br>aparate pagina maken: FORMER MEMBERS
+    Membership status: {$membershipStatusFilterMenu}<br>
+    Year: {$yearFilterMenu}
 </p>
 <table class="report-layout display">
     <thead>
     <tr>
-        <th><a href="{$currentURL}&newsort=2">Country</a></th>
-        <th><a href="{$currentURL}&newsort=3">Organization</a></th>
-        <th><a href="{$currentURL}&newsort=4">Member Since</a></th>
-        <th><a href="{$currentURL}&newsort=5">End Date</a></th>
-        <th><a href="{$currentURL}&newsort=6">Last seen at event</a></th>
-        <th><a href="{$currentURL}&newsort=7">N° of events attended this year</a></th>
-        <th><a href="{$currentURL}&newsort=8">N° of events attended last year</a></th>
-        <th><a href="{$currentURL}&newsort=9">Communication Channels</a></th>
-        <th><a href="{$currentURL}&newsort=10">Code of Conduct Signed</a></th>
-        <th><a href="{$currentURL}&newsort=11">Last Membership Fee</a></th>
+        <th><a href="{$currentURL}&newsortcol=2">Country</a></th>
+        <th><a href="{$currentURL}&newsortcol=3">Organization</a></th>
+        <th><a href="{$currentURL}&newsortcol=4">Member Since</a></th>
+        <th><a href="{$currentURL}&newsortcol=5">End Date</a></th>
+        <th><a href="{$currentURL}&newsortcol=6">Last seen at event</a></th>
+        <th><a href="{$currentURL}&newsortcol=7">N° of events attended this year</a></th>
+        <th><a href="{$currentURL}&newsortcol=8">N° of events attended last year</a></th>
+        <th><a href="{$currentURL}&newsortcol=9">Communication Channels</a></th>
+        <th><a href="{$currentURL}&newsortcol=10">Code of Conduct Signed</a></th>
+        <th><a href="{$currentURL}&newsortcol=11">Last Membership Fee</a></th>
     </tr>
     </thead>
     <tbody>

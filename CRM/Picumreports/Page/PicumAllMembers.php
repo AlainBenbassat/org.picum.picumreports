@@ -5,28 +5,38 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
   private $MEMBERSHIP_STATUS_CURRENT = 2;
   private $MEMBERSHIP_STATUS_TERMINATED = 8;
   private $MEMBERSHIP_STATUS_WITHDRAWALS = 6;
+  private $MEMBERSHIP_STATUS_NEW = 999;
+
+  private $filterStatusId = 0;
+  private $filterCountryId = 0;
+  private $filterYear = 0;
+
+  private $sortOrder;
+  private $sortOrderForUrl;
+  private $sortColumn;
 
   public function run() {
-    CRM_Utils_System::setTitle('PICUM ' . $this->getMemberLabel());
-
-    // get the number of the column to sort on, and the order (asc/desc)
-    [$newsort, $sortorder] = $this->getSort();
-
-    // get the country and status filter (if available)
-    [$filter, $filterQueryString] = $this->getFilter();
+    $this->retrieveSortColumnAndOrder();
+    $this->retrieveFilters();
+    $this->setPageTitle();
 
     // create the url for the column header hyperlink
-    $invertedSortorder = ($sortorder == 'asc') ? 1 : 0;
-    $currentURL = CRM_Utils_System::url('civicrm/picumallmembers', "reset=1&year=CURRENT$filterQueryString&previoussort=$newsort&sortorder=$invertedSortorder");
+    $queryString = $this->getQueryStringForCurrentUrl();
+    $currentURL = CRM_Utils_System::url('civicrm/picumallmembers', $queryString);
     $this->assign('currentURL', $currentURL);
 
-    $members = $this->getAllMembers($newsort, $sortorder, $filter);
+    // filter hyperlinks
+    $this->assign('membershipStatusFilterMenu', $this->getMembershipStatusFilterMenu());
+    $this->assign('yearFilterMenu', $this->getYearFilterMenu());
+
+    // retrieve the records
+    $members = $this->getAllMembers();
     $this->assign('members', $members);
 
     parent::run();
   }
 
-  private function getAllMembers($sort, $sortorder, $filter) {
+  private function getAllMembers() {
     $lastSeenOnSubquery = $this->getLastSeenOnSubquery();
 
     $noOfEventsThisYear = $this->getEventCountSubquery(date('Y'));
@@ -37,6 +47,8 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
     $codeOfConductStatusSubquery = $this->getCodeOfConductStatus();
 
     $contributionStatusSubquery = $this->getLastContribution();
+
+    $filter = $this->getStatusWhereClause() . $this->getCountryWhereClause();
 
     $sql = "
       select
@@ -66,11 +78,45 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
         and m.owner_membership_id IS NULL
         {$filter}
       order by
-        $sort $sortorder    
+        {$this->sortColumn} {$this->sortOrder}    
     ";
 
     $dao = CRM_Core_DAO::executeQuery($sql);
     return $dao->fetchAll();
+  }
+
+  private function getStatusWhereClause() {
+    $filter = '';
+
+    if ($this->filterStatusId == $this->MEMBERSHIP_STATUS_NEW) {
+      $filter = ' and year(m.start_date) = ' . $this->filterYear;
+    }
+    elseif ($this->filterStatusId == $this->MEMBERSHIP_STATUS_WITHDRAWALS || $this->filterStatusId == $this->MEMBERSHIP_STATUS_TERMINATED) {
+      $filter = ' and m.status_id = ' . $this->filterStatusId;
+      $filter .= ' and year(m.end_date) = ' . $this->filterYear;
+    }
+    else {
+      if ($this->filterYear == date('Y')) {
+        $filter = ' and m.status_id = ' . $this->MEMBERSHIP_STATUS_CURRENT;
+      }
+      else {
+        // AFWERKEN!!!!!!!!!!!!!!!!
+        //$filter = ' and m.status_id in (' . $this->MEMBERSHIP_STATUS_CURRENT, $this->MEMBERSHIP_STATUS_WITHDRAWLED_CANCELLED, $this->MEMBERSHIP_STATUS_TERMINATED];
+        //$condition = "year(m.start_date) <= $year and m.end_date >= '$year-12-31'";
+        $filter = ' and m.status_id = ' . $this->filterStatusId;
+      }
+    }
+
+    return $filter;
+  }
+
+  private function getCountryWhereClause() {
+    if ($this->filterCountryId) {
+      return ' and ctry.id = ' . $this->filterCountryId;
+    }
+    else {
+      return '';
+    }
   }
 
   private function getLastSeenOnSubquery() {
@@ -184,12 +230,12 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
     return $sql;
   }
 
-  private function getSort() {
-    $previoussort = CRM_Utils_Request::retrieveValue('previoussort', 'Integer', 2, FALSE, 'GET');
-    $newsort = CRM_Utils_Request::retrieveValue('newsort', 'Integer', $previoussort, FALSE, 'GET');
+  private function retrieveSortColumnAndOrder() {
+    $previoussortcol = CRM_Utils_Request::retrieveValue('previoussortcol', 'Integer', 2, FALSE, 'GET');
+    $newsortcol = CRM_Utils_Request::retrieveValue('newsortcol', 'Integer', $previoussortcol, FALSE, 'GET');
     $sortorder = CRM_Utils_Request::retrieveValue('sortorder', 'Integer', 0, FALSE, 'GET'); // 0 = asc, 1 = desc
 
-    if ($newsort == $previoussort) {
+    if ($newsortcol == $previoussortcol) {
       // invert the sort order
       if ($sortorder == 0) {
         $sortorder = 'asc';
@@ -202,43 +248,157 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
       $sortorder = 'asc';
     }
 
-    return [$newsort, $sortorder];
+    $this->sortColumn = $newsortcol;
+    $this->sortOrder = $sortorder;
+    $this->sortOrderForUrl = ($sortorder == 'asc') ? 1 : 0;
   }
 
-  private function getFilter() {
-    $filter = '';
-    $filterQueryString = '';
-
-    // get the country_id query parameter
-    $countryId = CRM_Utils_Request::retrieveValue('country_id', 'Integer', 0, FALSE, 'GET');
-    if ($countryId) {
-      $filter .= " and ctry.id = $countryId";
-      $filterQueryString = "&country_id=$countryId";
-    }
-
-    // get the status_id query parameter
-    $statusId = CRM_Utils_Request::retrieveValue('status_id', 'Integer', 0, FALSE, 'GET');
-    if (!$statusId) {
-      $statusId = $this->MEMBERSHIP_STATUS_CURRENT;
-    }
-    $filter .= " and m.status_id = $statusId";
-    $filterQueryString .= "&status_id=$statusId";
-
-    return [$filter, $filterQueryString];
+  private function retrieveFilters() {
+    $this->retrieveFilterCountryId();
+    $this->retrieveFilterStatusId();
+    $this->retrieveFilterYear();
   }
 
-  private function getMemberLabel() {
-    $statusId = CRM_Utils_Request::retrieveValue('status_id', 'Integer', 0, FALSE, 'GET');
-    if ($statusId == $this->MEMBERSHIP_STATUS_TERMINATED) {
+  private function retrieveFilterCountryId() {
+    $this->filterCountryId = CRM_Utils_Request::retrieveValue('country_id', 'Integer', 0, FALSE, 'GET');
+  }
+
+  private function retrieveFilterStatusId() {
+    $this->filterStatusId = CRM_Utils_Request::retrieveValue('status_id', 'Integer', 0, FALSE, 'GET');
+    if (!$this->filterStatusId) {
+      $this->filterStatusId = $this->MEMBERSHIP_STATUS_CURRENT;
+    }
+  }
+
+  private function retrieveFilterYear() {
+    $this->filterYear = CRM_Utils_Request::retrieveValue('year', 'Integer', date('Y'), FALSE, 'GET');
+  }
+
+  private function setPageTitle() {
+    if ($this->filterStatusId == $this->MEMBERSHIP_STATUS_TERMINATED) {
       $label = 'Terminated Members';
     }
-    elseif ($statusId == $this->MEMBERSHIP_STATUS_WITHDRAWALS) {
+    elseif ($this->filterStatusId == $this->MEMBERSHIP_STATUS_WITHDRAWALS) {
       $label = 'Withdrawn Members';
+    }
+    elseif ($this->filterStatusId == $this->MEMBERSHIP_STATUS_NEW) {
+      $label = 'New Members';
     }
     else {
       $label = 'Current Members';
     }
 
-    return $label;
+    CRM_Utils_System::setTitle('PICUM ' . $label . ' ' . $this->filterYear);
+  }
+
+  private function getQueryStringForCurrentUrl($overwriteStatusId = 0, $overwriteYear = 0) {
+    $queryParams = [
+      'reset' => 1,
+      'previoussortcol' => $this->sortColumn,
+      'sortorder' => $this->sortOrderForUrl,
+    ];
+
+    if ($this->filterCountryId) {
+      $queryParams['country_id'] = $this->filterCountryId;
+    }
+
+    if ($overwriteStatusId) {
+      $queryParams['status_id'] = $overwriteStatusId;
+    }
+    elseif ($this->filterStatusId) {
+      $queryParams['status_id'] = $this->filterStatusId;
+    }
+
+    if ($overwriteYear) {
+      $queryParams['year'] = $overwriteYear;
+    }
+    else {
+      $queryParams['year'] = $this->filterYear;
+    }
+
+    $queryString = '';
+    foreach ($queryParams as $k => $v) {
+      if ($queryString) {
+        $queryString .= '&';
+      }
+
+      $queryString .= "$k=$v";
+    }
+
+    return $queryString;
+  }
+
+  private function getMembershipStatusFilterMenu() {
+    $menu = '';
+
+    $items = [
+      'Current members' => $this->MEMBERSHIP_STATUS_CURRENT,
+      'New Members' => $this->MEMBERSHIP_STATUS_NEW,
+      'Withdrawals' => $this->MEMBERSHIP_STATUS_WITHDRAWALS,
+      'Terminated' => $this->MEMBERSHIP_STATUS_TERMINATED,
+    ];
+
+    $i = 1;
+    $numItems = count($items);
+    foreach ($items as $item => $statusId) {
+      if ($statusId == $this->filterStatusId) {
+        $menu .= $item; // current status, so no hyperlink around menu item
+      }
+      else {
+        $menu .= $this->getMenuItemWithFilterUrl($item, $statusId, 0);
+      }
+
+      $menu .= $this->addMenuSeparator($i, $numItems);
+
+      $i++;
+    }
+
+    return $menu;
+  }
+
+  private function getYearFilterMenu() {
+    $menu = '';
+    $year = date('Y');
+
+    $items = [
+      $year,
+      $year - 1,
+      $year - 2,
+    ];
+
+    $i = 1;
+    $numItems = count($items);
+    foreach ($items as $year) {
+      if ($year == $this->filterYear) {
+        $menu .= $year; // current year, so no hyperlink around menu item
+      }
+      else {
+        $menu .= $this->getMenuItemWithFilterUrl($year, 0, $year);
+      }
+
+      $menu .= $this->addMenuSeparator($i, $numItems);
+
+      $i++;
+    }
+
+    return $menu;
+  }
+
+  private function getMenuItemWithFilterUrl($item, $statusId, $year) {
+    $queryString = $this->getQueryStringForCurrentUrl($statusId, $year);
+    $url = CRM_Utils_System::url('civicrm/picumallmembers', $queryString);
+
+    $menuItem = "<a href=\"$url\">$item</a>";
+
+    return $menuItem;
+  }
+
+  private function addMenuSeparator($i, $numItems) {
+    if ($i != $numItems) {
+      return ' | ';
+    }
+    else {
+      return '';
+    }
   }
 }
