@@ -96,14 +96,13 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
       $filter .= ' and year(m.end_date) = ' . $this->filterYear;
     }
     else {
+      // current members or current members in specific year
       if ($this->filterYear == date('Y')) {
         $filter = ' and m.status_id = ' . $this->MEMBERSHIP_STATUS_CURRENT;
       }
       else {
-        // AFWERKEN!!!!!!!!!!!!!!!!
-        //$filter = ' and m.status_id in (' . $this->MEMBERSHIP_STATUS_CURRENT, $this->MEMBERSHIP_STATUS_WITHDRAWLED_CANCELLED, $this->MEMBERSHIP_STATUS_TERMINATED];
-        //$condition = "year(m.start_date) <= $year and m.end_date >= '$year-12-31'";
-        $filter = ' and m.status_id = ' . $this->filterStatusId;
+        $filter = ' and m.status_id in (' . $this->MEMBERSHIP_STATUS_CURRENT . ',' . $this->MEMBERSHIP_STATUS_WITHDRAWALS . ',' . $this->MEMBERSHIP_STATUS_TERMINATED . ') ';
+        $filter .= ' and year(m.start_date) <= ' . $this->filterYear . " and m.end_date >= '" . $this->filterYear . "-12-31'";
       }
     }
 
