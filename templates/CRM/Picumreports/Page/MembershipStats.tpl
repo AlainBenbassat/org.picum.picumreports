@@ -16,7 +16,7 @@
         {assign var="yyy" value=$row[0]}
         <tr class="{cycle values="odd-row,even-row"}">
             <td><a href="admin.php?page=CiviCRM&q=civicrm%2Fpicummembersstats&reset=1&year={$row[0]}">{$row[0]}</a></td>
-            <td>{$row[1]}</td>
+            <td><a href="admin.php?page=CiviCRM&q=civicrm%2Fpicumallmembers&reset=1&year={$row[0]}">{$row[1]}</a></td>
             <td>{$row[2]}</td>
             <td><a href="admin.php?page=CiviCRM&q=civicrm%2Fpicumallmembers&reset=1&status_id=999&year={$row[0]}">{$row[3]}</a></td>
             <td><a href="admin.php?page=CiviCRM&q=civicrm%2Fpicumallmembers&reset=1&status_id=6&year={$row[0]}">{$row[4]}</a></td>
