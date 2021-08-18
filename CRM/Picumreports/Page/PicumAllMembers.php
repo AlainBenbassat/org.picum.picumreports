@@ -90,6 +90,12 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
 
     if ($this->filterStatusId == $this->MEMBERSHIP_STATUS_NEW) {
       $filter = ' and year(m.start_date) = ' . $this->filterYear;
+      if ($this->filterYear == date('Y')) {
+        $filter .= ' and m.status_id = ' . $this->MEMBERSHIP_STATUS_CURRENT;
+      }
+      else {
+        $filter .= ' and m.status_id in (' . $this->MEMBERSHIP_STATUS_CURRENT . ',' . $this->MEMBERSHIP_STATUS_WITHDRAWALS . ',' . $this->MEMBERSHIP_STATUS_TERMINATED . ') ';
+      }
     }
     elseif ($this->filterStatusId == $this->MEMBERSHIP_STATUS_WITHDRAWALS || $this->filterStatusId == $this->MEMBERSHIP_STATUS_TERMINATED) {
       $filter = ' and m.status_id = ' . $this->filterStatusId;
