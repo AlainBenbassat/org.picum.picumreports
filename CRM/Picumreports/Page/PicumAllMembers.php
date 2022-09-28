@@ -55,7 +55,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
         c.id
         , ctry.name country
         , c.organization_name
-        , m.start_date
+        , m.join_date
         , m.end_date
         , ($lastSeenOnSubquery) last_seen_on
         , ($noOfEventsThisYear) no_of_events_this_year
@@ -89,7 +89,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
     $filter = '';
 
     if ($this->filterStatusId == $this->MEMBERSHIP_STATUS_NEW) {
-      $filter = ' and year(m.start_date) = ' . $this->filterYear;
+      $filter = ' and year(m.join_date) = ' . $this->filterYear;
       if ($this->filterYear == date('Y')) {
         $filter .= ' and m.status_id = ' . $this->MEMBERSHIP_STATUS_CURRENT;
       }
@@ -108,7 +108,7 @@ class CRM_Picumreports_Page_PicumAllMembers extends CRM_Core_Page {
       }
       else {
         $filter = ' and m.status_id in (' . $this->MEMBERSHIP_STATUS_CURRENT . ',' . $this->MEMBERSHIP_STATUS_WITHDRAWALS . ',' . $this->MEMBERSHIP_STATUS_TERMINATED . ') ';
-        $filter .= ' and year(m.start_date) <= ' . $this->filterYear . " and m.end_date >= '" . $this->filterYear . "-12-31'";
+        $filter .= ' and year(m.join_date) <= ' . $this->filterYear . " and m.end_date >= '" . $this->filterYear . "-12-31'";
       }
     }
 
