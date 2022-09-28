@@ -22,7 +22,7 @@
         <tr class="{cycle values="odd-row,even-row"}">
             <td>{$row.country}</td>
             <td><a href="admin.php?page=CiviCRM&q=civicrm%2Fcontact%2Fview&reset=1&cid={$row.id}">{$row.organization_name}</a></td>
-            <td>{$row.start_date}</td>
+            <td>{$row.join_date}</td>
             <td>{$row.end_date}</td>
             <td>{$row.last_seen_on}</td>
             <td>{$row.no_of_events_this_year}</td>
