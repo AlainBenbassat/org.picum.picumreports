@@ -5,7 +5,7 @@ class CRM_Picumreports_Page_MembershipStats extends CRM_Core_Page {
   private $MEMBERSHIP_STATUS_CURRENT = 2;
   private $MEMBERSHIP_STATUS_WITHDRAWLED_CANCELLED = 6;
   private $MEMBERSHIP_STATUS_TERMINATED = 8;
-  private $HISTORY_NUM_YEARS = 3;
+  private $HISTORY_NUM_YEARS = 10;
   private $year;
 
   public function __construct($title = NULL, $mode = NULL) {

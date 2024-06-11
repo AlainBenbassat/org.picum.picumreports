@@ -2,7 +2,7 @@
 use CRM_Picumreports_ExtensionUtil as E;
 
 class CRM_Picumreports_Page_EventsStats extends CRM_Core_Page {
-  private $HISTORY_NUM_YEARS = 3;
+  private $HISTORY_NUM_YEARS = 10;
   private $year;
 
   public function __construct($title = NULL, $mode = NULL) {
